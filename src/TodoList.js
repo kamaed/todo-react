@@ -7,7 +7,7 @@ import useStyles from './styles';
 function TodoList({items, setEditVisible, setEditedTodo, deleteMethod}) {
   const classes = useStyles();
     return (
-      <Container maxWidth="md">
+      <Container maxWidth="md" className={classes.ContentCenter}>
         <Button
           onClick={() => {
             setEditedTodo(null)
@@ -15,17 +15,18 @@ function TodoList({items, setEditVisible, setEditedTodo, deleteMethod}) {
           }}
           variant="outlined"
           color="primary"
-          className={classes.ButtonCenter}
         >
           <AddIcon/>
           Add
         </Button>
-        <Grid container alignItems="center" justifyContent="center">
-          <ul>{items.map(todo => (<TodoItem key={todo.id}
+        <Grid container direction='column' className={classes.ContentCenter}>
+          {items.map(todo => (<TodoItem key={todo.id}
               todo={todo}
               setEditVisible={setEditVisible}
               setEditedTodo={setEditedTodo}
-              deleteMethod={deleteMethod}/>))}</ul>
+              deleteMethod={deleteMethod}/>
+            )
+          )}
         </Grid>
       </Container>
     );

@@ -20,14 +20,14 @@ function TodoEdit({open, onClose, editedTodo, editMethod}) {
                 className={classes.TextField}
                 autoFocus
                 id="content"
-                label="Content"
+                label="What do you want to do"
                 value={content}
                 onChange={(event) => setContent(event.target.value)}
             />
             <TextField
                 className={classes.TextField}
                 id="date"
-                label="Date"
+                label="When"
                 type="datetime-local"
                 value={date}
                 onChange={(event) => setDate(event.target.value)}

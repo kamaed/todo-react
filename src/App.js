@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, } from 'react';
 import TodoList from './TodoList';
 import TodoEdit from './TodoEdit';
-import { Box, Typography, CssBaseline, AppBar } from '@material-ui/core';
-import useStyles from './styles'
+import { Box, Typography, CssBaseline, AppBar, } from '@material-ui/core';
+import useStyles from './styles';
 import GoogleAuth from './GoogleAuth';
 
 function App() {
   const classes = useStyles();
   const [isLogged, setLogged] = useState(false);
+  const [loginError, setLoginError] = useState(null);
   const [account, setAccount] = useState(null);
   const [isLoaded, setLoaded] = useState(false);
   const [todos, setTodos] = useState([]);
@@ -43,19 +44,29 @@ function App() {
     })
   }
 
+  const login = (account) => {
+    console.log(account);
+    setLogged(true);
+    setAccount(account);
+  }
+
   useEffect(fetchData);
 
   return (
     <>
       <CssBaseline />
-      <AppBar position="relative">
+      <AppBar position="relative" className={classes.AppBar}>
         <Typography variant='h4' className={classes.title}>Todo</Typography>
+        {account && <Typography variant='h6' className={classes.accountName}>{account.profileObj.name}</Typography>}
       </AppBar>
       {!isLogged ? 
-        <GoogleAuth
-          onSuccess={(response) => console.log(response)}
-          onFailure={(response) => console.log(response)}
-        /> :
+        (<>
+          <GoogleAuth
+            onSuccess={login}
+            onFailure={setLoginError}
+          />
+          {loginError && <Typography variant='h5' color='error'>Shit, something go wrong. {loginError}"</Typography>}
+        </>) :
         <Box className={classes.container}>
           {isLoaded ? (
             <>
