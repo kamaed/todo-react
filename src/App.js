@@ -7,7 +7,6 @@ import GoogleAuth from './GoogleAuth';
 
 function App() {
   const classes = useStyles();
-  const [isLogged, setLogged] = useState(false);
   const [loginError, setLoginError] = useState(null);
   const [account, setAccount] = useState(null);
   const [isLoaded, setLoaded] = useState(false);
@@ -46,8 +45,6 @@ function App() {
   }
 
   const login = (account) => {
-    console.log(account)
-    setLogged(true);
     setAccount(account);
   }
 
@@ -57,7 +54,7 @@ function App() {
 
   useEffect(fetchData, []);
 
-  if (!isLogged) { 
+  if (!account) { 
     return (<>
       <GoogleAuth
         onSuccess={login}
