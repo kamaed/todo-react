@@ -4,8 +4,23 @@ import useStyles from './styles';
 
 function TodoEdit({open, onClose, editedTodo, editMethod}) {
     const classes = useStyles();
-    const [content, setContent] = useState(editedTodo ? editedTodo.content : "");
-    const [date, setDate] =  useState((editedTodo ? new Date(editedTodo.date) : new Date()).toISOString().slice(0,16));
+
+    const initialTodoState = {
+        id: editedTodo?.id,
+        content: editedTodo?.content || "",
+        date: (editedTodo ? new Date(editedTodo.date) : new Date()).toISOString().slice(0,16),
+        _links: {
+            self: {
+                href: editedTodo?._links?.self?.href
+            },
+        },
+    };
+
+    const [todo, setTodo] = useState(initialTodoState);
+
+    const handleChange = (event) => {
+        setTodo({...todo, [event.target.id]:event.target.value})
+    }
 
     return (
         <Dialog 
@@ -21,16 +36,16 @@ function TodoEdit({open, onClose, editedTodo, editMethod}) {
                 autoFocus
                 id="content"
                 label="What do you want to do"
-                value={content}
-                onChange={(event) => setContent(event.target.value)}
+                value={todo.content}
+                onChange={handleChange}
             />
             <TextField
                 className={classes.TextField}
                 id="date"
                 label="When"
                 type="datetime-local"
-                value={date}
-                onChange={(event) => setDate(event.target.value)}
+                value={todo.date}
+                onChange={handleChange}
                 InputLabelProps={{
                 shrink: true,
                 }}
@@ -39,7 +54,7 @@ function TodoEdit({open, onClose, editedTodo, editMethod}) {
                 <DialogActions>
                     <Button
                         onClick={()=>{
-                            editMethod({content: content, date: date}, editedTodo && editedTodo._links.self.href)
+                            editMethod(todo)
                             onClose()
                         }}
                         color="primary"

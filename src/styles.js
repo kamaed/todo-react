@@ -46,6 +46,9 @@ const useStyles = makeStyles(theme => (
         heroButtons: {
             marginTop: theme.spacing(4),
         },
+        Button: {
+            margin: theme.spacing(3)
+        },
         Modal: {
             padding: theme.spacing(1),
         },
@@ -55,10 +58,13 @@ const useStyles = makeStyles(theme => (
         ContentCenter: {
             display: 'grid',
             placeItems: 'center',
-            padding: theme.spacing(3, 0),
+            padding: theme.spacing(1, 0),
         },
         List: {
             paddingInlineStart: theme.spacing(0),
+        },
+        TabPanel: {
+            backgroundColor: theme.palette.background.default,
         },
         Auth: {
             display: 'grid',

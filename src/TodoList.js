@@ -1,11 +1,55 @@
-import { Container, Grid, Button } from '@material-ui/core';
+import { Container, Button, AppBar, Tabs, Tab, Box, } from '@material-ui/core';
 import React from 'react';
-import TodoItem from './TodoItem';
 import AddIcon from '@material-ui/icons/Add';
 import useStyles from './styles';
+import TodoItems from './TodoItems';
 
-function TodoList({items, setEditVisible, setEditedTodo, deleteMethod}) {
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`scrollable-auto-tabpanel-${index}`}
+      aria-labelledby={`scrollable-auto-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box p={3}>
+          {children}
+        </Box>
+      )}
+    </div>
+  );
+}
+
+function a11yProps(index) {
+  return {
+    id: `scrollable-auto-tab-${index}`,
+    'aria-controls': `scrollable-auto-tabpanel-${index}`,
+  };
+}
+
+function TodoList({items, setEditVisible, setEditedTodo, deleteMethod, setDone}) {
   const classes = useStyles();
+  const [value, setValue] = React.useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
+  function TodoItemsWithFilter({filter}) {
+    return (
+      <TodoItems
+        items={items.filter(filter)}
+        setEditVisible={setEditVisible}
+        setEditedTodo={setEditedTodo}
+        deleteMethod={deleteMethod}
+        setDone={setDone}
+      />
+    );
+  }
     return (
       <Container maxWidth="md" className={classes.ContentCenter}>
         <Button
@@ -15,19 +59,34 @@ function TodoList({items, setEditVisible, setEditedTodo, deleteMethod}) {
           }}
           variant="outlined"
           color="primary"
+          className={classes.Button}
         >
           <AddIcon/>
           Add
         </Button>
-        <Grid container direction='column' className={classes.ContentCenter}>
-          {items.map(todo => (<TodoItem key={todo.id}
-              todo={todo}
-              setEditVisible={setEditVisible}
-              setEditedTodo={setEditedTodo}
-              deleteMethod={deleteMethod}/>
-            )
-          )}
-        </Grid>
+        <div className={classes.root}>
+          <AppBar position="static" color="default">
+            <Tabs
+              value={value}
+              onChange={handleChange}
+              indicatorColor="primary"
+              textColor="primary"
+              variant="scrollable"
+              scrollButtons="auto"
+              aria-label="scrollable auto tabs example"
+            >
+              <Tab label="In progress" {...a11yProps(0)} />
+              <Tab label="Done" {...a11yProps(1)} />
+            </Tabs>
+          </AppBar>
+          <TabPanel value={value} index={0} className={classes.TabPanel}>
+            <TodoItemsWithFilter filter={todo => !todo.done}/>
+          </TabPanel>
+          <TabPanel value={value} index={1} className={classes.TabPanel}>
+            <TodoItemsWithFilter filter={todo => todo.done}/>
+          </TabPanel>
+        </div>
+        
       </Container>
     );
 }

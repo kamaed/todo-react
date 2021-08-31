@@ -10,7 +10,7 @@ function GoogleAuth({onSuccess, onFailure}) {
                 buttonText="Login with Google"
                 onSuccess={onSuccess}
                 onFailure={onFailure}
-                cookiePolicy={'single_host_origin'}
+                isSignedIn={true}
             />
         </div>
     );

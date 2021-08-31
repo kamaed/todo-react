@@ -23,7 +23,7 @@ function App() {
         return response.json();
       })
       .then(json => {
-        if (isLoaded) {
+        if (json._embedded) {
           setTodos(json._embedded.todos)
           setCollectionLink(json._links.self.href)
         }
@@ -32,25 +32,43 @@ function App() {
 
   const fetchDelete = (link) => {
     fetch(link, {method: 'DELETE'})
+    .then(fetchData)
   }
 
-  const fetchEdit = (obj, link) => {
-    fetch(editedTodo ? link : collectionLink, {
-      method: editedTodo ? 'PATCH' : 'POST',
+  const fetchEdit = (todo) => {
+    fetch(todo?._links?.self?.href || collectionLink, {
+      method: todo?.id ? 'PATCH' : 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(obj)
-    })
+      body: JSON.stringify(todo)
+    }).then(fetchData)
   }
 
   const login = (account) => {
-    console.log(account);
+    console.log(account)
     setLogged(true);
     setAccount(account);
   }
 
-  useEffect(fetchData);
+  const setDone = (todo, done) => {
+    fetchEdit({...todo, done: done})
+  }
+
+  useEffect(fetchData, []);
+
+  if (!isLogged) { 
+    return (<>
+      <GoogleAuth
+        onSuccess={login}
+        onFailure={setLoginError}
+      />
+      {loginError && <div>
+        <Typography variant='h5' color='error'>Shit, something go wrong</Typography>
+        <Typography variant='h5' color='error'>{loginError}</Typography>
+      </div>}
+    </>)
+  }
 
   return (
     <>
@@ -59,14 +77,6 @@ function App() {
         <Typography variant='h4' className={classes.title}>Todo</Typography>
         {account && <Typography variant='h6' className={classes.accountName}>{account.profileObj.name}</Typography>}
       </AppBar>
-      {!isLogged ? 
-        (<>
-          <GoogleAuth
-            onSuccess={login}
-            onFailure={setLoginError}
-          />
-          {loginError && <Typography variant='h5' color='error'>Shit, something go wrong. {loginError}"</Typography>}
-        </>) :
         <Box className={classes.container}>
           {isLoaded ? (
             <>
@@ -81,11 +91,11 @@ function App() {
                 setEditVisible={setEditVisible}
                 setEditedTodo={setEditedTodo}
                 deleteMethod={fetchDelete}
+                setDone={setDone}
               />
             </>
           ) : <Typography>Loading...</Typography>}
         </Box>
-      }
     </>
   );
 }
