@@ -5,7 +5,7 @@ import EditIcon from '@material-ui/icons/Edit'
 import { CardActions, CardContent, Grid, Typography, Card, Checkbox } from '@material-ui/core';
 import useStyles from './styles'
   
-  function TodoItem({todo, setEditVisible, setEditedTodo, deleteMethod, setDone}) {
+  function TodoItem({todo, setEditVisible, setEditedTodo, editMethod, deleteMethod, }) {
     const classes = useStyles();
     
     const editTodo = () => {
@@ -14,8 +14,7 @@ import useStyles from './styles'
     }
 
     const setDoneTodo = (event) => {
-      setEditedTodo(todo);
-      setDone(todo, event.target.checked)
+      editMethod({...todo, done: event.target.checked})
     }
 
     const deleteTodo = deleteMethod.bind(this, todo._links.self.href);

@@ -31,7 +31,12 @@ function a11yProps(index) {
   };
 }
 
-function TodoList({items, setEditVisible, setEditedTodo, deleteMethod, setDone}) {
+const emptyTodo = {
+  content: "",
+  date: new Date()
+};
+
+function TodoList({items, setEditVisible, setEditedTodo, editMethod, deleteMethod, }) {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
 
@@ -45,8 +50,8 @@ function TodoList({items, setEditVisible, setEditedTodo, deleteMethod, setDone})
         items={items.filter(filter)}
         setEditVisible={setEditVisible}
         setEditedTodo={setEditedTodo}
+        editMethod={editMethod}
         deleteMethod={deleteMethod}
-        setDone={setDone}
       />
     );
   }
@@ -54,7 +59,7 @@ function TodoList({items, setEditVisible, setEditedTodo, deleteMethod, setDone})
       <Container maxWidth="md" className={classes.ContentCenter}>
         <Button
           onClick={() => {
-            setEditedTodo(null)
+            setEditedTodo(emptyTodo)
             setEditVisible(true)
           }}
           variant="outlined"

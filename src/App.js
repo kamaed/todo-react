@@ -48,10 +48,6 @@ function App() {
     setAccount(account);
   }
 
-  const setDone = (todo, done) => {
-    fetchEdit({...todo, done: done})
-  }
-
   useEffect(fetchData, []);
 
   if (!account) { 
@@ -81,14 +77,15 @@ function App() {
                   open={editVisible}
                   onClose={setEditVisible.bind(this, false)}
                   editedTodo={editedTodo}
+                  setEditedTodo={setEditedTodo}
                   editMethod={fetchEdit}
               />}
               <TodoList
                 items={todos}
                 setEditVisible={setEditVisible}
                 setEditedTodo={setEditedTodo}
+                editMethod={fetchEdit}
                 deleteMethod={fetchDelete}
-                setDone={setDone}
               />
             </>
           ) : <Typography>Loading...</Typography>}

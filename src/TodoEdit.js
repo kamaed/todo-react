@@ -1,25 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Dialog, DialogActions, TextField, Button } from '@material-ui/core';
 import useStyles from './styles';
 
-function TodoEdit({open, onClose, editedTodo, editMethod}) {
+function TodoEdit({open, onClose, editedTodo, setEditedTodo, editMethod}) {
     const classes = useStyles();
 
-    const initialTodoState = {
-        id: editedTodo?.id,
-        content: editedTodo?.content || "",
-        date: (editedTodo ? new Date(editedTodo.date) : new Date()).toISOString().slice(0,16),
-        _links: {
-            self: {
-                href: editedTodo?._links?.self?.href
-            },
-        },
-    };
-
-    const [todo, setTodo] = useState(initialTodoState);
-
     const handleChange = (event) => {
-        setTodo({...todo, [event.target.id]:event.target.value})
+        setEditedTodo({...editedTodo, [event.target.id]:event.target.value})
     }
 
     return (
@@ -36,7 +23,7 @@ function TodoEdit({open, onClose, editedTodo, editMethod}) {
                 autoFocus
                 id="content"
                 label="What do you want to do"
-                value={todo.content}
+                value={editedTodo.content}
                 onChange={handleChange}
             />
             <TextField
@@ -44,7 +31,7 @@ function TodoEdit({open, onClose, editedTodo, editMethod}) {
                 id="date"
                 label="When"
                 type="datetime-local"
-                value={todo.date}
+                value={new Date(editedTodo.date).toISOString().slice(0,16)}
                 onChange={handleChange}
                 InputLabelProps={{
                 shrink: true,
@@ -54,7 +41,7 @@ function TodoEdit({open, onClose, editedTodo, editMethod}) {
                 <DialogActions>
                     <Button
                         onClick={()=>{
-                            editMethod(todo)
+                            editMethod(editedTodo)
                             onClose()
                         }}
                         color="primary"
