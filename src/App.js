@@ -5,6 +5,10 @@ import { Box, Typography, CssBaseline, AppBar, } from '@material-ui/core';
 import useStyles from './styles';
 import GoogleAuth from './GoogleAuth';
 
+const authHeaders = (account) => {
+  return {'Authorization': account ? 'Bearer ' + account.tokenId : '',}
+}
+
 function App() {
   const classes = useStyles();
   const [loginError, setLoginError] = useState(null);
@@ -16,21 +20,38 @@ function App() {
   const [collectionLink, setCollectionLink] = useState(null);
 
   const fetchData = () => {
-    fetch('http://localhost:8080/todos')
+    if (account) {
+      fetch('http://localhost/todos', {
+        headers: {
+          ...authHeaders(account),
+        },
+      })
       .then(response => {
-        setLoaded(response.status >= 200 && response.status < 300);
-        return response.json();
+        if (!response.ok) {
+          response.text().then(text => alert(text))
+        } else {
+          setLoaded(true);
+          return response.json();
+        }
       })
       .then(json => {
-        if (json._embedded) {
+        console.log(json)
+        if (json?._embedded) {
           setTodos(json._embedded.todos)
           setCollectionLink(json._links.self.href)
         }
       });
+    }
   };
 
   const fetchDelete = (link) => {
-    fetch(link, {method: 'DELETE'})
+    fetch(link, {
+      headers: {
+      ...authHeaders(account),
+      },
+      method: 'DELETE',
+      credentials: 'include'
+    })
     .then(fetchData)
   }
 
@@ -38,17 +59,19 @@ function App() {
     fetch(todo?._links?.self?.href || collectionLink, {
       method: todo?.id ? 'PATCH' : 'POST',
       headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(todo)
+        ...authHeaders(account),
+        'Content-Type': 'application/json',
+      },        
+      body: JSON.stringify(todo),
     }).then(fetchData)
   }
 
   const login = (account) => {
+    console.log(account);
     setAccount(account);
   }
 
-  useEffect(fetchData, []);
+  useEffect(fetchData, [account]);
 
   if (!account) { 
     return (<>
