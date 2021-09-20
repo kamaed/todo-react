@@ -21,7 +21,7 @@ function App() {
 
   const fetchData = () => {
     if (account) {
-      fetch('http://localhost/todos', {
+      fetch('https://ssfmffmmmi.execute-api.eu-central-1.amazonaws.com/todos', {
         headers: {
           ...authHeaders(account),
         },
